@@ -250,6 +250,34 @@ async function loadCategories() {
   }
 
   const filter = document.getElementById("categoryFilter");
+  const adminFilter = document.getElementById("adminCategory");
+
+  filter.innerHTML = '<option value="">All Categories</option>';
+  adminFilter.innerHTML = '<option value="">Choose category</option>';
+
+  data.forEach(category => {
+    const option1 = document.createElement("option");
+    option1.value = category.id;
+    option1.textContent = category.name;
+    filter.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.value = category.id;
+    option2.textContent = category.name;
+    adminFilter.appendChild(option2);
+  });
+}
+  const { data, error } = await db
+    .from("categories")
+    .select("id, name")
+    .order("name");
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  const filter = document.getElementById("categoryFilter");
   filter.innerHTML = '<option value="">All Categories</option>';
 
   data.forEach(category => {
