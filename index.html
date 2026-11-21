@@ -333,7 +333,59 @@ async function loadProducts() {
       </div>`;
   });
 }
+async function addProduct() {
+  const name = document.getElementById("productName").value.trim();
+  const description = document.getElementById("productDescription").value.trim();
+  const price = Number(document.getElementById("productPrice").value);
+  const stock = Number(document.getElementById("productStock").value);
+  const category_id = document.getElementById("adminCategory").value;
+  const image_url = document.getElementById("productImage").value.trim();
+  const result = document.getElementById("adminMessage");
 
+  if (!name || !category_id || !Number.isFinite(price) ||
+      price <= 0 || !Number.isInteger(stock) || stock < 0) {
+    result.textContent = "Enter a name, category, valid price and stock quantity.";
+    return;
+  }
+
+  if (image_url && !/^https?:\/\//i.test(image_url)) {
+    result.textContent = "Please enter a valid image link.";
+    return;
+  }
+
+  result.textContent = "Saving product...";
+
+  const { data: admin, error: adminError } = await db.rpc("is_admin");
+
+  if (adminError || admin !== true) {
+    result.textContent = "Administrator access required.";
+    return;
+  }
+
+  const { error } = await db.from("products").insert({
+    name,
+    description,
+    price,
+    stock,
+    category_id,
+    image_url: image_url || null,
+    is_active: true
+  });
+
+  if (error) {
+    result.textContent = "Could not save: " + error.message;
+    return;
+  }
+
+  result.textContent = "Product saved successfully!";
+  document.getElementById("productName").value = "";
+  document.getElementById("productDescription").value = "";
+  document.getElementById("productPrice").value = "";
+  document.getElementById("productStock").value = "";
+  document.getElementById("productImage").value = "";
+
+  loadProducts();
+}
 loadCategories();
 loadProducts();
 checkSession();
