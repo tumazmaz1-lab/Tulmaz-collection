@@ -83,7 +83,34 @@ footer{text-align:center;background:#182c25;color:white;padding:20px}
     <div id="productList"></div>
   </div>
 </section>
+<section class="section" id="admin" style="display:none">
+  <div class="card">
+    <h2>Owner Dashboard</h2>
+    <h3>Add a New Product</h3>
 
+    <input id="productName" placeholder="Product name">
+
+    <textarea id="productDescription"
+      placeholder="Product description"></textarea>
+
+    <input id="productPrice" type="number"
+      placeholder="Price in KES">
+
+    <input id="productStock" type="number"
+      placeholder="Stock quantity">
+
+    <select id="adminCategory">
+      <option value="">Choose category</option>
+    </select>
+
+    <input id="productImage" type="url"
+      placeholder="Product image URL">
+
+    <button onclick="addProduct()">Save Product</button>
+
+    <p id="adminMessage"></p>
+  </div>
+</section>
 <footer>
 <p>© 2026 Tulmaz Collection</p>
 <p>Serving customers across Kenya</p>
@@ -156,7 +183,23 @@ async function logIn() {
   updateScreen(data.user);
 }
 
-function updateScreen(user) {
+async function updateScreen(user) {
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("loggedIn").style.display = "block";
+
+  document.getElementById("welcome").textContent =
+    "Welcome, " + (user.user_metadata.full_name || user.email);
+
+  const { data, error } = await db.rpc("is_admin");
+
+  const admin = document.getElementById("admin");
+
+  if (!error && data === true) {
+    admin.style.display = "block";
+  } else {
+    admin.style.display = "none";
+  }
+}
   document.getElementById("auth").style.display = "none";
   document.getElementById("loggedIn").style.display = "block";
   document.getElementById("welcome").textContent =
