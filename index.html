@@ -452,6 +452,23 @@ async function changeQuantity(productId, amount) {
 
   showCart();
 }
+  async function checkout() {
+  if (cart.length === 0) {
+    alert("Your shopping cart is empty.");
+    return;
+  }
+
+  const { data } = await db.auth.getSession();
+
+  if (!data.session) {
+    alert("Please create an account or log in before checkout.");
+    document.getElementById("account").scrollIntoView();
+    return;
+  }
+
+  document.getElementById("checkoutForm").style.display = "block";
+  document.getElementById("checkoutForm").scrollIntoView();
+  }
 async function addProduct() {
   const name = document.getElementById("productName").value.trim();
   const description = document.getElementById("productDescription").value.trim();
@@ -521,6 +538,15 @@ let image_url = null;
 
   loadProducts();
 }
+  document.getElementById("deliveryMethod").addEventListener("change", function() {
+  const details = document.getElementById("deliveryDetails");
+
+  if (this.value === "collection") {
+    details.style.display = "none";
+  } else {
+    details.style.display = "block";
+  }
+});
 loadCategories();
 loadProducts();
 checkSession();
