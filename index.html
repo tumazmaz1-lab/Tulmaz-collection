@@ -230,11 +230,6 @@ async function updateScreen(user) {
     admin.style.display = "none";
   }
 }
-  document.getElementById("auth").style.display = "none";
-  document.getElementById("loggedIn").style.display = "block";
-  document.getElementById("welcome").textContent =
-    "Welcome, " + (user.user_metadata.full_name || user.email);
-}
 
 function openShop() {
   document.getElementById("shop").style.display = "block";
@@ -295,26 +290,6 @@ async function loadCategories() {
     option2.value = category.id;
     option2.textContent = category.name;
     adminFilter.appendChild(option2);
-  });
-}
-  const { data, error } = await db
-    .from("categories")
-    .select("id, name")
-    .order("name");
-
-  if (error) {
-    showMessage(error.message);
-    return;
-  }
-
-  const filter = document.getElementById("categoryFilter");
-  filter.innerHTML = '<option value="">All Categories</option>';
-
-  data.forEach(category => {
-    filter.innerHTML += `
-      <option value="${escapeHTML(category.id)}">
-        ${escapeHTML(category.name)}
-      </option>`;
   });
 }
 
