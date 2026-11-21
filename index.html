@@ -544,7 +544,7 @@ async function changeQuantity(productId, amount) {
     .from("orders")
     .insert({
       user_id: user.id,
-      customer: customerName,
+      customer_name: customerName,
       phone: phone,
       county: county,
       town: town,
