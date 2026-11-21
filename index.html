@@ -2,144 +2,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tulmaz Collection</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7f5f1;
-      color: #222;
-    }
-    header {
-      background: #182c25;
-      color: white;
-      padding: 22px 16px;
-      text-align: center;
-    }
-    header h1 { margin: 0; font-size: 27px; }
-    header p { margin: 7px 0 0; color: #d8e4dc; }
-    nav {
-      background: white;
-      padding: 14px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-    nav a {
-      color: #182c25;
-      text-decoration: none;
-      margin: 0 10px;
-      font-weight: bold;
-    }
-    .hero {
-      background: #e5ede6;
-      padding: 45px 20px;
-      text-align: center;
-    }
-    .hero h2 { font-size: 30px; margin: 0 0 12px; }
-    .hero p { line-height: 1.6; }
-    .section { padding: 25px 16px; max-width: 1000px; margin: auto; }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-      gap: 15px;
-    }
-    .product {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 2px 8px #00000010;
-    }
-    .photo { font-size: 48px; padding: 15px; }
-    .price { color: #17633e; font-weight: bold; }
-    .account {
-      background: white;
-      padding: 22px;
-      border-radius: 12px;
-      max-width: 420px;
-      margin: 20px auto;
-    }
-    input, button {
-      width: 100%;
-      padding: 13px;
-      margin: 7px 0;
-      border-radius: 7px;
-      font-size: 16px;
-    }
-    input { border: 1px solid #bbb; }
-    button {
-      border: 0;
-      background: #17633e;
-      color: white;
-      font-weight: bold;
-    }
-    footer {
-      background: #182c25;
-      color: white;
-      padding: 22px;
-      text-align: center;
-      margin-top: 30px;
-    }
-    #message { text-align: center; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tulmaz Collection</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f7f5f1;color:#222}
+header{background:#182c25;color:white;text-align:center;padding:24px}
+header h1{margin:0}
+nav{background:white;padding:14px;text-align:center}
+nav a{margin:10px;color:#182c25;text-decoration:none;font-weight:bold}
+.hero{text-align:center;background:#e5ede6;padding:35px 15px}
+.section{padding:20px;max-width:650px;margin:auto}
+.card{background:white;padding:20px;border-radius:12px;margin:15px 0}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:7px;font-size:16px}
+input{border:1px solid #bbb}
+button{background:#17633e;color:white;border:0;font-weight:bold}
+.secondary{background:#444}
+#shop{display:none}
+#message{font-size:14px;overflow-wrap:anywhere}
+footer{text-align:center;background:#182c25;color:white;padding:20px}
+</style>
 </head>
 <body>
-  <header>
-    <h1>TULMAZ COLLECTION</h1>
-    <p>Your style, your choice</p>
-  </header>
+<header>
+<h1>TULMAZ COLLECTION</h1>
+<p>Your style, your choice</p>
+</header>
 
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#products">Products</a>
-    <a href="#account">Account</a>
-  </nav>
+<nav>
+<a href="#home">Home</a>
+<a href="#account">Account</a>
+<a href="#shop">Shop</a>
+</nav>
 
-  <section class="hero" id="home">
-    <h2>Welcome to Tulmaz Collection</h2>
-    <p>Discover quality products at great prices.</p>
-    <p>Shopping made simple across Kenya.</p>
-  </section>
+<section class="hero" id="home">
+<h2>Welcome to Tulmaz Collection</h2>
+<p>Discover quality products at great prices.</p>
+<p>Shopping made simple across Kenya.</p>
+</section>
 
-  <section class="section" id="products">
-    <h2>Our Products</h2>
-    <p>Our shop catalogue will appear here.</p>
-    <div class="products">
-      <div class="product">
-        <div class="photo">👗</div>
-        <h3>Fashion</h3>
-        <p>Discover our fashion collection.</p>
-      </div>
-      <div class="product">
-        <div class="photo">👜</div>
-        <h3>Accessories</h3>
-        <p>Find something special.</p>
-      </div>
-      <div class="product">
-        <div class="photo">👟</div>
-        <h3>Footwear</h3>
-        <p>Explore our footwear collection.</p>
-      </div>
-    </div>
-  </section>
+<section class="section" id="account">
+<h2>Customer Account</h2>
 
-  <section class="section" id="account">
-    <h2>Customer Account</h2>
-    <div class="account">
-      <p>Customer registration and login will be connected in the next stage.</p>
-      <input type="email" placeholder="Email address" disabled>
-      <input type="password" placeholder="Password" disabled>
-      <button disabled>Coming soon</button>
-    </div>
-    <p id="message"></p>
-  </section>
+<div class="card" id="auth">
+<h3>Create an account</h3>
+<input id="signupName" placeholder="Full name">
+<input id="signupEmail" type="email" placeholder="Email address">
+<input id="signupPassword" type="password" placeholder="Create password">
+<button onclick="signUp()">Create account</button>
 
-  <footer>
-    <p>© 2026 Tulmaz Collection</p>
-    <p>Serving customers across Kenya</p>
-  </footer>
+<hr>
+<h3>Already registered? Log in</h3>
+<input id="loginEmail" type="email" placeholder="Email address">
+<input id="loginPassword" type="password" placeholder="Password">
+<button onclick="logIn()">Log in</button>
+</div>
+
+<div class="card" id="loggedIn" style="display:none">
+<p id="welcome"></p>
+<button onclick="openShop()">Continue shopping</button>
+<button class="secondary" onclick="logOut()">Log out</button>
+</div>
+
+<p id="message"></p>
+</section>
+
+<section class="section" id="shop">
+<div class="card">
+<h2>Welcome to the shop!</h2>
+<p>You are signed in successfully.</p>
+<p>Our product catalogue and shopping cart will be connected next.</p>
+</div>
+</section>
+
+<footer>
+<p>© 2026 Tulmaz Collection</p>
+<p>Serving customers across Kenya</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://rxxizxeygjugnbupcxxz.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_sfzLhheulm3XKKUmytShqQ_81POZAK7";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const message = document.getElementById("message");
+
+function showMessage(text) {
+  message.textContent = text;
+}
+
+async function signUp() {
+  const name = document.getElementById("signupName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
+
+  if (!name || !email || password.length < 8) {
+    showMessage("Enter your name, email and a password of at least 8 characters.");
+    return;
+  }
+
+  showMessage("Creating your account...");
+
+  const {data, error} = await db.auth.signUp({
+    email,
+    password,
+    options: {data: {full_name: name}}
+  });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  if (data.session) {
+    showMessage("Account created successfully!");
+    updateScreen(data.session.user);
+  } else {
+    showMessage("Account created! Check your email to confirm, then log in.");
+  }
+}
+
+async function logIn() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  showMessage("Signing in...");
+
+  const {data, error} = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  showMessage("Login successful!");
+  updateScreen(data.user);
+}
+
+function updateScreen(user) {
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("loggedIn").style.display = "block";
+  document.getElementById("welcome").textContent =
+    "Welcome, " + (user.user_metadata.full_name || user.email);
+}
+
+function openShop() {
+  document.getElementById("shop").style.display = "block";
+  document.getElementById("shop").scrollIntoView();
+}
+
+async function logOut() {
+  const {error} = await db.auth.signOut();
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  document.getElementById("auth").style.display = "block";
+  document.getElementById("loggedIn").style.display = "none";
+  document.getElementById("shop").style.display = "none";
+  showMessage("You have logged out.");
+}
+
+async function checkSession() {
+  const {data} = await db.auth.getSession();
+  if (data.session) updateScreen(data.session.user);
+}
+
+checkSession();
+</script>
 </body>
 </html>
