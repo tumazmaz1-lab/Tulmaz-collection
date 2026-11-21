@@ -343,7 +343,8 @@ async function addProduct() {
   const price = Number(document.getElementById("productPrice").value);
   const stock = Number(document.getElementById("productStock").value);
   const category_id = document.getElementById("adminCategory").value;
-  const image_url = document.getElementById("productImage").value.trim();
+  const imageFile = document.getElementById("productImage").files[0];
+let image_url = null;
   const result = document.getElementById("adminMessage");
 
   if (!name || !category_id || !Number.isFinite(price) ||
@@ -352,12 +353,27 @@ async function addProduct() {
     return;
   }
 
-  if (image_url && !/^https?:\/\//i.test(image_url)) {
-    result.textContent = "Please enter a valid image link.";
+
+  result.textContent = "Saving product...";
+  if (imageFile) {
+  const fileExt = imageFile.name.split(".").pop();
+  const fileName = `${Date.now()}.${fileExt}`;
+
+  const { data: uploadData, error: uploadError } = await db.storage
+    .from("product-images")
+    .upload(fileName, imageFile);
+
+  if (uploadError) {
+    result.textContent = "Image upload failed: " + uploadError.message;
     return;
   }
 
-  result.textContent = "Saving product...";
+  const { data: publicData } = db.storage
+    .from("product-images")
+    .getPublicUrl(uploadData.path);
+
+  image_url = publicData.publicUrl;
+  }
 
   const { data: admin, error: adminError } = await db.rpc("is_admin");
 
