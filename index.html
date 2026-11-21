@@ -64,7 +64,12 @@ footer{text-align:center;background:#182c25;color:white;padding:20px}
 <button onclick="openShop()">Continue shopping</button>
 <button class="secondary" onclick="logOut()">Log out</button>
 </div>
-
+<div id="resetPasswordBox" style="display:none">
+  <h3>Reset Administrator Password</h3>
+  <input id="newPassword" type="password"
+    placeholder="Enter new password">
+  <button onclick="saveNewPassword()">Save New Password</button>
+</div>
 <p id="message"></p>
 </section>
 
@@ -131,7 +136,32 @@ const message = document.getElementById("message");
 function showMessage(text) {
   message.textContent = text;
 }
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "PASSWORD_RECOVERY") {
+    document.getElementById("resetPasswordBox").style.display = "block";
+    showMessage("Enter your new password below.");
+  }
+});
 
+async function saveNewPassword() {
+  const password = document.getElementById("newPassword").value;
+
+  if (password.length < 8) {
+    showMessage("Password must be at least 8 characters.");
+    return;
+  }
+
+  const { error } = await db.auth.updateUser({ password });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  document.getElementById("resetPasswordBox").style.display = "none";
+  document.getElementById("newPassword").value = "";
+  showMessage("Password changed successfully! You can now log in.");
+}
 async function signUp() {
   const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
