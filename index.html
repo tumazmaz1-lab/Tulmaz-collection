@@ -338,7 +338,7 @@ async function loadProducts() {
     </button>
   </div>`;
   });
-
+}
 async function addToCart(productId) {
   const { data: product, error } = await db
     .from("products")
