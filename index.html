@@ -185,6 +185,86 @@ async function checkSession() {
   const {data} = await db.auth.getSession();
   if (data.session) updateScreen(data.session.user);
 }
+  function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+}
+
+async function loadCategories() {
+  const { data, error } = await db
+    .from("categories")
+    .select("id, name")
+    .order("name");
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  const filter = document.getElementById("categoryFilter");
+  filter.innerHTML = '<option value="">All Categories</option>';
+
+  data.forEach(category => {
+    filter.innerHTML += `
+      <option value="${escapeHTML(category.id)}">
+        ${escapeHTML(category.name)}
+      </option>`;
+  });
+}
+
+async function loadProducts() {
+  const message = document.getElementById("productMessage");
+  const list = document.getElementById("productList");
+  const category = document.getElementById("categoryFilter").value;
+
+  message.textContent = "Loading products...";
+  list.innerHTML = "";
+
+  let query = db
+    .from("products")
+    .select("id, name, description, price, stock, image_url, category_id")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+
+  if (category) query = query.eq("category_id", category);
+
+  const { data, error } = await query;
+
+  if (error) {
+    message.textContent = error.message;
+    return;
+  }
+
+  message.textContent = data.length
+    ? `${data.length} products found`
+    : "No products available yet.";
+
+  data.forEach(product => {
+    const image = product.image_url &&
+      /^https?:\/\//i.test(product.image_url)
+      ? `<img src="${escapeHTML(product.image_url)}"
+          alt="${escapeHTML(product.name)}"
+          style="width:100%;max-height:200px;object-fit:contain">`
+      : "";
+
+    list.innerHTML += `
+      <div class="card">
+        ${image}
+        <h3>${escapeHTML(product.name)}</h3>
+        <p>${escapeHTML(product.description || "")}</p>
+        <p><strong>Price: KES ${Number(product.price).toLocaleString("en-KE")}</strong></p>
+        <p>Stock available: ${Number(product.stock)}</p>
+      </div>`;
+  });
+}
+
+loadCategories();
+loadProducts();
 checkSession();
 </script>
 </body>
