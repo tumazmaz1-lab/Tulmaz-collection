@@ -90,6 +90,36 @@ footer{text-align:center;background:#182c25;color:white;padding:20px}
 <div id="cartItems">Your cart is empty.</div>
 <h3 id="cartTotal">Total: KES 0</h3>
 <button onclick="checkout()">Proceed to Checkout</button>
+    <div id="checkoutForm" style="display:none">
+  <h2>Checkout Details</h2>
+
+  <input id="customerName" placeholder="Full name">
+  <input id="customerPhone" placeholder="Phone number">
+
+  <label>Delivery method:</label>
+  <select id="deliveryMethod">
+    <option value="courier">Courier Delivery</option>
+    <option value="collection">Customer Collection</option>
+  </select>
+
+  <div id="deliveryDetails">
+    <input id="customerCounty" placeholder="County">
+    <input id="customerTown" placeholder="Town">
+    <textarea id="deliveryInstructions"
+      placeholder="Delivery instructions"></textarea>
+  </div>
+
+  <label>Payment method:</label>
+  <select id="paymentMethod">
+    <option value="mpesa">M-Pesa</option>
+    <option value="airtel">Airtel Money</option>
+    <option value="card">Visa / Mastercard</option>
+    <option value="cod">Cash on Delivery</option>
+  </select>
+
+  <button onclick="placeOrder()">Place Order</button>
+  <p id="checkoutMessage"></p>
+    </div>
   </div>
 </section>
 <section class="section" id="admin" style="display:none">
