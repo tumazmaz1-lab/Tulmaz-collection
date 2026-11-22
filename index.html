@@ -337,7 +337,17 @@ async function checkSession() {
       <div class="card">
         <p><strong>Order:</strong> ${escapeHTML(order.id)}</p>
         <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
-        <p><strong>Status:</strong> ${escapeHTML(order.status)}</p>
+        <p><strong>Order Progress:</strong></p>
+<p style="font-size:18px;font-weight:bold;color:green;">
+  ${escapeHTML(order.status)}
+</p>
+<p>
+  ${order.status === "Pending" ? "Your order has been received." : ""}
+  ${order.status === "Processing" ? "Your order is being prepared." : ""}
+  ${order.status === "Shipped" ? "Your order is on its way." : ""}
+  ${order.status === "Delivered" ? "Your order has been delivered." : ""}
+  ${order.status === "Cancelled" ? "This order has been cancelled." : ""}
+</p>
         <p><strong>Payment:</strong> ${escapeHTML(order.payment_status)}</p>
         <p><strong>Total:</strong> KES ${Number(order.total).toLocaleString("en-KE")}</p>
         <h4>Items</h4>
