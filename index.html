@@ -530,7 +530,8 @@ async function changeQuantity(productId, amount) {
   document.getElementById("checkoutForm").style.display = "block";
   document.getElementById("checkoutForm").scrollIntoView();
   }
-  async function placeOrder() {
+  
+async function placeOrder() {
   const result = document.getElementById("checkoutMessage");
 
   const { data: sessionData } = await db.auth.getSession();
@@ -546,10 +547,17 @@ async function changeQuantity(productId, amount) {
     return;
   }
 
-  const customerName = document.getElementById("customerName").value.trim();
-  const phone = document.getElementById("customerPhone").value.trim();
-  const method = document.getElementById("deliveryMethod").value;
-  const paymentMethod = document.getElementById("paymentMethod").value;
+  const customerName =
+    document.getElementById("customerName").value.trim();
+
+  const phone =
+    document.getElementById("customerPhone").value.trim();
+
+  const method =
+    document.getElementById("deliveryMethod").value;
+
+  const paymentMethod =
+    document.getElementById("paymentMethod").value;
 
   const county = method === "courier"
     ? document.getElementById("customerCounty").value.trim()
@@ -573,80 +581,39 @@ async function changeQuantity(productId, amount) {
     return;
   }
 
-  result.textContent = "Checking products and stock...";
-
-  let subtotal = 0;
-
-  for (const item of cart) {
-    const { data: product, error } = await db
-      .from("products")
-      .select("id, name, price, stock, is_active")
-      .eq("id", item.id)
-      .single();
-
-    if (error || !product || !product.is_active ||
-        product.stock < item.quantity) {
-      result.textContent = "A product is unavailable or has insufficient stock. Please review your cart.";
-      return;
-    }
-
-    item.name = product.name;
-    item.price = product.price;
-    item.stock = product.stock;
-    subtotal += Number(product.price) * item.quantity;
-  }
-
-  const deliveryFee = 0;
-  const total = subtotal + deliveryFee;
-
   result.textContent = "Saving your order...";
 
-  const { data: order, error: orderError } = await db
-    .from("orders")
-    .insert({
-      user_id: user.id,
-      customer_name: customerName,
-      phone: phone,
-      county: county,
-      town: town,
-      delivery_method: method,
-      delivery_instructions: instructions,
-      subtotal: subtotal,
-      delivery_fee: deliveryFee,
-      total: total,
-      payment_method: paymentMethod
-    })
-    .select("id")
-    .single();
+  const { data: orderId, error } = await db.rpc(
+    "place_customer_order",
+    {
+      p_customer_name: customerName,
+      p_phone: phone,
+      p_county: county,
+      p_town: town,
+      p_delivery_method: method,
+      p_delivery_instructions: instructions,
+      p_payment_method: paymentMethod,
+      p_items: cart.map(item => ({
+        product_id: Number(item.id),
+        quantity: Number(item.quantity)
+      }))
+    }
+  );
 
-  if (orderError) {
-    result.textContent = "Could not save order: " + orderError.message;
+  if (error) {
+    result.textContent = "Could not place order: " + error.message;
     return;
   }
 
-  const orderItems = cart.map(item => ({
-    order_id: order.id,
-    product_id: item.id,
-    product_name: item.name,
-    quantity: item.quantity,
-    unit_price: item.price
-  }));
-
-  const { error: itemsError } = await db
-    .from("order_items")
-    .insert(orderItems);
-
-  if (itemsError) {
-    result.textContent = "Order was created, but its items could not be saved. Contact the shop owner with order number " + order.id + ". Error: " + itemsError.message;
-    return;
-  }
-
-  result.textContent = "Order placed successfully! Order number: " + order.id;
+  result.textContent =
+    "Order placed successfully! Order number: " + orderId;
 
   cart = [];
   showCart();
+
   document.getElementById("checkoutForm").style.display = "none";
-  }
+}
+
   async function loadAdminOrders() {
   const container = document.getElementById("adminOrders");
   container.textContent = "Loading customer orders...";
