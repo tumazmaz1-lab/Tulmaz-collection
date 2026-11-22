@@ -694,7 +694,14 @@ async function changeQuantity(productId, amount) {
         <p>Phone: ${escapeHTML(order.phone)}</p>
         <p>Location: ${escapeHTML(order.county)}, ${escapeHTML(order.town)}</p>
         <p>Delivery: ${escapeHTML(order.delivery_method)}</p>
-        <p>Status: ${escapeHTML(order.status)}</p>
+        <label>Update Order Status:</label>
+<select onchange="updateOrderStatus('${escapeHTML(order.id)}', this.value)">
+  <option value="Pending" ${order.status === "Pending" ? "selected" : ""}>Pending</option>
+  <option value="Processing" ${order.status === "Processing" ? "selected" : ""}>Processing</option>
+  <option value="Shipped" ${order.status === "Shipped" ? "selected" : ""}>Shipped</option>
+  <option value="Delivered" ${order.status === "Delivered" ? "selected" : ""}>Delivered</option>
+  <option value="Cancelled" ${order.status === "Cancelled" ? "selected" : ""}>Cancelled</option>
+</select>
         <p>Payment: ${escapeHTML(order.payment_status)}</p>
         <p>Total: KES ${Number(order.total).toLocaleString("en-KE")}</p>
         <h4>Items</h4>
@@ -703,6 +710,41 @@ async function changeQuantity(productId, amount) {
         `).join("")}
       </div>`;
   }
+  }
+  async function updateOrderStatus(orderId, newStatus) {
+  const allowedStatuses = [
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Cancelled"
+  ];
+
+  if (!allowedStatuses.includes(newStatus)) {
+    alert("Invalid order status.");
+    return;
+  }
+
+  const { data: admin, error: adminError } =
+    await db.rpc("is_admin");
+
+  if (adminError || admin !== true) {
+    alert("Administrator access required.");
+    return;
+  }
+
+  const { error } = await db
+    .from("orders")
+    .update({ status: newStatus })
+    .eq("id", orderId);
+
+  if (error) {
+    alert("Could not update order: " + error.message);
+    return;
+  }
+
+  alert("Order status updated successfully!");
+  loadAdminOrders();
   }
 async function addProduct() {
   const name = document.getElementById("productName").value.trim();
