@@ -512,7 +512,7 @@ function showCart() {
 
   if (!cart.length) {
     container.textContent = "Your cart is empty.";
-    totalElement.textContent = "Total: KES 0";
+    totalElement.textContent = "Subtotal: KES 0";
     return;
   }
 
@@ -533,7 +533,7 @@ function showCart() {
   });
 
   totalElement.textContent =
-    "Total: KES " + total.toLocaleString("en-KE");
+    "Subtotal: KES " + total.toLocaleString("en-KE");
 }
 
 async function changeQuantity(productId, amount) {
