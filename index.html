@@ -612,6 +612,13 @@ async function placeOrder() {
     result.textContent = "Enter your full name and phone number.";
     return;
   }
+  const collectionShop =
+  document.getElementById("collectionShop").value;
+
+if (!collectionShop) {
+  result.textContent = "Please select a Tulmaz Collection shop.";
+  return;
+}
 
   if (method === "courier" && (!county || !town)) {
     result.textContent = "Enter your county and town.";
@@ -630,6 +637,7 @@ async function placeOrder() {
       p_delivery_method: method,
       p_delivery_instructions: instructions,
       p_payment_method: paymentMethod,
+      p_collection_shop_id: Number(document.getElementById("collectionShop").value),
       p_items: cart.map(item => ({
         product_id: Number(item.id),
         quantity: Number(item.quantity)
