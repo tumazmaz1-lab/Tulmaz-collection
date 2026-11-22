@@ -608,6 +608,9 @@ async function placeOrder() {
     : "Collection";
 
   const instructions = method === "courier"
+    const deliveryLocation = method === "courier"
+  ? document.getElementById("deliveryLocation").value.trim()
+  : "Customer collection";
     ? document.getElementById("deliveryInstructions").value.trim()
     : "Customer collection";
 
@@ -627,6 +630,10 @@ if (!collectionShop) {
     result.textContent = "Enter your county and town.";
     return;
   }
+  if (method === "courier" && !deliveryLocation) {
+  result.textContent = "Enter your village, estate or nearest landmark.";
+  return;
+  }
 
   result.textContent = "Saving your order...";
 
@@ -638,6 +645,7 @@ if (!collectionShop) {
       p_county: county,
       p_town: town,
       p_delivery_method: method,
+      p_delivery_location: deliveryLocation,
       p_delivery_instructions: instructions,
       p_payment_method: paymentMethod,
       p_collection_shop_id: Number(document.getElementById("collectionShop").value),
