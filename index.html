@@ -725,6 +725,7 @@ if (!collectionShop) {
         <p>Phone: ${escapeHTML(order.phone)}</p>
         <p>Location: ${escapeHTML(order.county)}, ${escapeHTML(order.town)}</p>
         <p>Delivery: ${escapeHTML(order.delivery_method)}</p>
+        <p>Delivery Location: ${escapeHTML(order.delivery_location || "Not provided")}</p>
         <p>Collection Shop: ${
   escapeHTML(selectedShop?.shop_name || "Not selected")
 }</p>
