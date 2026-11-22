@@ -61,6 +61,8 @@ footer{text-align:center;background:#182c25;color:white;padding:20px}
 <div class="card" id="loggedIn" style="display:none">
 <p id="welcome"></p>
 <button onclick="openShop()">Continue shopping</button>
+  <button onclick="loadMyOrders()">My Orders</button>
+<div id="myOrders"></div>
 <button class="secondary" onclick="logOut()">Log out</button>
 </div>
 <div id="resetPasswordBox" style="display:none">
@@ -286,6 +288,61 @@ async function checkSession() {
   const {data} = await db.auth.getSession();
   if (data.session) updateScreen(data.session.user);
 }
+  async function loadMyOrders() {
+  const container = document.getElementById("myOrders");
+  container.textContent = "Loading your orders...";
+
+  const { data: sessionData } = await db.auth.getSession();
+  const user = sessionData.session?.user;
+
+  if (!user) {
+    container.textContent = "Please log in to view your orders.";
+    return;
+  }
+
+  const { data: orders, error } = await db
+    .from("orders")
+    .select("id, created_at, status, total, payment_status")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.textContent = "Could not load orders: " + error.message;
+    return;
+  }
+
+  if (!orders.length) {
+    container.textContent = "You have not placed any orders yet.";
+    return;
+  }
+
+  container.innerHTML = "<h3>Your Order History</h3>";
+
+  for (const order of orders) {
+    const { data: items, error: itemsError } = await db
+      .from("order_items")
+      .select("product_name, quantity, unit_price")
+      .eq("order_id", order.id);
+
+    if (itemsError) {
+      container.textContent = "Could not load order items: " + itemsError.message;
+      return;
+    }
+
+    container.innerHTML += `
+      <div class="card">
+        <p><strong>Order:</strong> ${escapeHTML(order.id)}</p>
+        <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+        <p><strong>Status:</strong> ${escapeHTML(order.status)}</p>
+        <p><strong>Payment:</strong> ${escapeHTML(order.payment_status)}</p>
+        <p><strong>Total:</strong> KES ${Number(order.total).toLocaleString("en-KE")}</p>
+        <h4>Items</h4>
+        ${items.map(item => `
+          <p>${escapeHTML(item.product_name)} — Quantity: ${Number(item.quantity)} — KES ${Number(item.unit_price).toLocaleString("en-KE")}</p>
+        `).join("")}
+      </div>`;
+  }
+  }
   function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
     "&": "&amp;",
