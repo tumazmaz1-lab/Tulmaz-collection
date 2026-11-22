@@ -400,7 +400,30 @@ async function loadCategories() {
     adminFilter.appendChild(option2);
   });
 }
+async function loadCollectionShops() {
+  const select = document.getElementById("collectionShop");
 
+  const { data, error } = await db
+    .from("collection_shops")
+    .select("id, shop_name, location")
+    .eq("is_active", true)
+    .order("shop_name");
+
+  if (error) {
+    select.innerHTML = '<option value="">Could not load shops</option>';
+    return;
+  }
+
+  select.innerHTML = '<option value="">Choose a collection shop</option>';
+
+  data.forEach(shop => {
+    select.innerHTML += `
+      <option value="${shop.id}">
+        ${escapeHTML(shop.shop_name)} - ${escapeHTML(shop.location)}
+      </option>`;
+  });
+}
+  
 async function loadProducts() {
   const message = document.getElementById("productMessage");
   const list = document.getElementById("productList");
@@ -806,6 +829,7 @@ let image_url = null;
   }
 });
 loadCategories();
+  loadCollectionShops();
 loadProducts();
 checkSession();
 </script>
