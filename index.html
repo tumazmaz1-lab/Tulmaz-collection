@@ -603,16 +603,13 @@ async function placeOrder() {
     ? document.getElementById("customerCounty").value.trim()
     : "Collection";
 
-  const town = method === "courier"
-    ? document.getElementById("customerTown").value.trim()
-    : "Collection";
-
   const instructions = method === "courier"
-    const deliveryLocation = method === "courier"
+  ? document.getElementById("deliveryInstructions").value.trim()
+  : "Customer collection";
+
+const deliveryLocation = method === "courier"
   ? document.getElementById("deliveryLocation").value.trim()
   : "Customer collection";
-    ? document.getElementById("deliveryInstructions").value.trim()
-    : "Customer collection";
 
   if (!customerName || !phone) {
     result.textContent = "Enter your full name and phone number.";
