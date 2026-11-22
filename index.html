@@ -127,6 +127,10 @@ footer{text-align:center;background:#182c25;color:white;padding:20px}
 <section class="section" id="admin" style="display:none">
   <div class="card">
     <h2>Owner Dashboard</h2>
+    <hr>
+<h3>Customer Orders</h3>
+<button onclick="loadAdminOrders()">Refresh Orders</button>
+<div id="adminOrders">No orders loaded yet.</div>
     <h3>Add a New Product</h3>
 
     <input id="productName" placeholder="Product name">
@@ -642,6 +646,63 @@ async function changeQuantity(productId, amount) {
   cart = [];
   showCart();
   document.getElementById("checkoutForm").style.display = "none";
+  }
+  async function loadAdminOrders() {
+  const container = document.getElementById("adminOrders");
+  container.textContent = "Loading customer orders...";
+
+  const { data: admin, error: adminError } =
+    await db.rpc("is_admin");
+
+  if (adminError || admin !== true) {
+    container.textContent = "Administrator access required.";
+    return;
+  }
+
+  const { data: orders, error } = await db
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.textContent = "Could not load orders: " + error.message;
+    return;
+  }
+
+  if (!orders.length) {
+    container.textContent = "No customer orders yet.";
+    return;
+  }
+
+  container.innerHTML = "";
+
+  for (const order of orders) {
+    const { data: items, error: itemsError } = await db
+      .from("order_items")
+      .select("product_name, quantity, unit_price")
+      .eq("order_id", order.id);
+
+    if (itemsError) {
+      container.textContent = "Could not load order items: " + itemsError.message;
+      return;
+    }
+
+    container.innerHTML += `
+      <div class="card">
+        <h4>Order: ${escapeHTML(order.id)}</h4>
+        <p>Customer: ${escapeHTML(order.customer_name)}</p>
+        <p>Phone: ${escapeHTML(order.phone)}</p>
+        <p>Location: ${escapeHTML(order.county)}, ${escapeHTML(order.town)}</p>
+        <p>Delivery: ${escapeHTML(order.delivery_method)}</p>
+        <p>Status: ${escapeHTML(order.status)}</p>
+        <p>Payment: ${escapeHTML(order.payment_status)}</p>
+        <p>Total: KES ${Number(order.total).toLocaleString("en-KE")}</p>
+        <h4>Items</h4>
+        ${items.map(item => `
+          <p>${escapeHTML(item.product_name)} — Quantity: ${Number(item.quantity)}</p>
+        `).join("")}
+      </div>`;
+  }
   }
 async function addProduct() {
   const name = document.getElementById("productName").value.trim();
