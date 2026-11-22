@@ -698,6 +698,13 @@ if (!collectionShop) {
       container.textContent = "Could not load order items: " + itemsError.message;
       return;
     }
+    const { data: selectedShop } = order.collection_shop_id
+  ? await db
+      .from("collection_shops")
+      .select("shop_name")
+      .eq("id", order.collection_shop_id)
+      .maybeSingle()
+  : { data: null };
 
     container.innerHTML += `
       <div class="card">
@@ -706,6 +713,9 @@ if (!collectionShop) {
         <p>Phone: ${escapeHTML(order.phone)}</p>
         <p>Location: ${escapeHTML(order.county)}, ${escapeHTML(order.town)}</p>
         <p>Delivery: ${escapeHTML(order.delivery_method)}</p>
+        <p>Collection Shop: ${
+  escapeHTML(selectedShop?.shop_name || "Not selected")
+}</p>
         <label>Update Order Status:</label>
 <select onchange="updateOrderStatus('${escapeHTML(order.id)}', this.value)">
   <option value="Pending" ${order.status === "Pending" ? "selected" : ""}>Pending</option>
