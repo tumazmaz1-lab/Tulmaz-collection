@@ -763,6 +763,12 @@ document.getElementById("mpesaDetails").style.display =
   <option value="Cancelled" ${order.status === "Cancelled" ? "selected" : ""}>Cancelled</option>
 </select>
         <p>Payment: ${escapeHTML(order.payment_status)}</p>
+        <label>Update Payment Status:</label>
+<select onchange="updatePaymentStatus('${escapeHTML(order.id)}', this.value)">
+  <option value="Unpaid" ${order.payment_status === "Unpaid" ? "selected" : ""}>Unpaid</option>
+  <option value="Paid" ${order.payment_status === "Paid" ? "selected" : ""}>Paid</option>
+</select>
+        <p>M-Pesa Transaction Code: ${escapeHTML(order.mpesa_receipt_number || "Not provided")}</p>
         <p>Total: KES ${Number(order.total).toLocaleString("en-KE")}</p>
         <h4>Items</h4>
         ${items.map(item => `
@@ -804,6 +810,33 @@ document.getElementById("mpesaDetails").style.display =
   }
 
   alert("Order status updated successfully!");
+  loadAdminOrders();
+  }
+  async function updatePaymentStatus(orderId, newStatus) {
+  if (!["Paid", "Unpaid"].includes(newStatus)) {
+    alert("Invalid payment status.");
+    return;
+  }
+
+  const { data: admin, error: adminError } =
+    await db.rpc("is_admin");
+
+  if (adminError || admin !== true) {
+    alert("Administrator access required.");
+    return;
+  }
+
+  const { error } = await db
+    .from("orders")
+    .update({ payment_status: newStatus })
+    .eq("id", orderId);
+
+  if (error) {
+    alert("Could not update payment: " + error.message);
+    return;
+  }
+
+  alert("Payment status updated successfully!");
   loadAdminOrders();
   }
 async function addProduct() {
