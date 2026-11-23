@@ -119,12 +119,15 @@ footer{text-align:center;background:#182c25;color:white;padding:20px}
   </div>
 
   <label>Payment method:</label>
-  <select id="paymentMethod">
-    <option value="mpesa">M-Pesa</option>
-    <option value="airtel">Airtel Money</option>
-    <option value="card">Visa / Mastercard</option>
-    <option value="cod">Cash on Delivery</option>
-  </select>
+<select id="paymentMethod">
+  <option value="mpesa">M-Pesa Buy Goods Till</option>
+  <option value="collection">Pay on Collection</option>
+</select>
+
+<div id="mpesaDetails">
+  <p><strong>Tulmaz Collection Till Number: 3107068</strong></p>
+  <input id="mpesaReceipt" placeholder="Enter M-Pesa transaction code">
+</div>
 
   <button onclick="placeOrder()">Place Order</button>
   <p id="checkoutMessage"></p>
