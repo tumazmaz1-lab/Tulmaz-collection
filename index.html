@@ -648,7 +648,7 @@ if (!collectionShop) {
       p_delivery_method: method,
       p_delivery_location: deliveryLocation,
       p_delivery_instructions: instructions,
-      p_payment_method: paymentMethod,
+   =   p_payment_method: paymentMethod,
       p_collection_shop_id: Number(document.getElementById("collectionShop").value),
       p_items: cart.map(item => ({
         product_id: Number(item.id),
