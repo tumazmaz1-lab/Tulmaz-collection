@@ -602,6 +602,19 @@ async function placeOrder() {
   const paymentMethod =
     document.getElementById("paymentMethod").value;
 
+  if (paymentMethod === "collection" && method === "courier") {
+  result.textContent = "Pay on Collection is only available for customer collection orders.";
+  return;
+  }
+  
+const mpesaReceipt =
+  document.getElementById("mpesaReceipt").value.trim();
+
+if (paymentMethod === "mpesa" && !mpesaReceipt) {
+  result.textContent = "Enter your M-Pesa transaction code.";
+  return;
+}
+  
   const county = method === "courier"
     ? document.getElementById("customerCounty").value.trim()
     : "Collection";
@@ -651,12 +664,13 @@ if (!collectionShop) {
       p_delivery_method: method,
       p_delivery_location: deliveryLocation,
       p_delivery_instructions: instructions,
-   =   p_payment_method: paymentMethod,
+      p_payment_method: paymentMethod,
       p_collection_shop_id: Number(document.getElementById("collectionShop").value),
       p_items: cart.map(item => ({
-        product_id: Number(item.id),
-        quantity: Number(item.quantity)
-      }))
+  product_id: Number(item.id),
+  quantity: Number(item.quantity)
+})),
+p_mpesa_receipt_number: paymentMethod === "mpesa" ? mpesaReceipt : null
     }
   );
 
@@ -674,6 +688,14 @@ if (!collectionShop) {
   document.getElementById("checkoutForm").style.display = "none";
 }
 
+document.getElementById("paymentMethod").addEventListener("change", function() {
+  document.getElementById("mpesaDetails").style.display =
+    this.value === "mpesa" ? "block" : "none";
+});
+
+document.getElementById("mpesaDetails").style.display =
+  document.getElementById("paymentMethod").value === "mpesa" ? "block" : "none";  
+  
   async function loadAdminOrders() {
   const container = document.getElementById("adminOrders");
   container.textContent = "Loading customer orders...";
